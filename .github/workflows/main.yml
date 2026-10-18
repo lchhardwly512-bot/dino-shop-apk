@@ -1,0 +1,51 @@
+name: Build Dino Shop APKs
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v3
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Install Flet CLI
+        run: pip install flet
+
+      - name: Build Customer APK
+        run: |
+          cd dino_customer
+          flet build apk --verbose
+
+      - name: Build Seller APK
+        run: |
+          cd dino_seller
+          flet build apk --verbose
+
+      - name: Upload APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: dino-apks
+          path: |
+            dino_customer/build/app/outputs/flutter-apk/app-release.apk
+            dino_seller/build/app/outputs/flutter-apk/app-release.apk
