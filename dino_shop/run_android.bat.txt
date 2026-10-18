@@ -1,0 +1,4 @@
+@echo off
+echo Dar hale ejraye seller.py baraye android...
+"C:\Users\ali\AppData\Local\Programs\Python\Python312\python.exe" -m flet run main.py --android
+pause
