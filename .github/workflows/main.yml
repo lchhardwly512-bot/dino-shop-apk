@@ -12,9 +12,53 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: List files in repository
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Clone Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.2'
+          channel: 'stable'
+
+      - name: Install Flet CLI
+        run: pip install flet
+
+      - name: Find and build projects
         run: |
-          echo "Current directory:"
-          pwd
-          echo "Contents of root directory:"
-          ls -la
+          echo "Searching for Flet/Python projects..."
+          find . -name "main.py" -o -name "pubspec.yaml"
+          
+          # اگر پوشه dino_customer وجود داشت، بساز
+          if [ -d "dino_customer" ]; then
+            echo "Building dino_customer..."
+            cd dino_customer && flet build apk --verbose && cd ..
+          elif [ -d "Dino_Customer" ]; then
+            echo "Building Dino_Customer..."
+            cd Dino_Customer && flet build apk --verbose && cd ..
+          fi
+
+          # اگر پوشه dino_seller وجود داشت، بساز
+          if [ -d "dino_seller" ]; then
+            echo "Building dino_seller..."
+            cd dino_seller && flet build apk --verbose && cd ..
+          elif [ -d "Dino_Seller" ]; then
+            echo "Building Dino_Seller..."
+            cd Dino_Seller && flet build apk --verbose && cd ..
+          fi
+
+      - name: Upload APKs if exist
+        uses: actions/upload-artifact@v4
+        with:
+          name: dino-apks
+          path: |
+            **/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: ignore
