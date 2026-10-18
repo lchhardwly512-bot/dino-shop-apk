@@ -23,12 +23,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v3
+      - name: Clone Flutter
+        uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
+          flutter-version: '3.22.2'
           channel: 'stable'
-          cache: true
 
       - name: Install Flet CLI
         run: pip install flet
